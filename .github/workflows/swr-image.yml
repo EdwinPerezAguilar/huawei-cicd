@@ -1,0 +1,33 @@
+name: "commit-main"
+
+on:
+  push:
+    branches: 
+    - 'main'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: check docker version
+      run: docker -v
+      
+    - name: Log in to HuaweiCloud SWR
+      uses: huaweicloud/swr-login@v1
+      with:
+        region: "la-north-2"
+        access-key-id: ${{ secrets.ACCESSKEY }}
+        access-key-secret: ${{ secrets.SECRETACCESSKEY }}
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build and push
+      id: docker_build
+      uses: docker/build-push-action@v3
+      with:
+        #context: ./
+        #file: ./Dockerfile
+        push: true
+        tags: swr.na-mexico-1.myhuaweicloud.com/cdci-test/webtest:latest
